@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<FeatureService>();
 
 builder.Services.AddCors(options =>
 {

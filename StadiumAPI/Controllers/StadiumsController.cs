@@ -47,6 +47,8 @@ namespace StadiumReservationApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] StadiumDto dto)
         {
+            if (!await _service.FeaturesExistAsync(dto.FeatureIds))
+                return BadRequest("One or more selected features do not exist.");
             // تحويل البيانات من StadiumDto إلى Stadium Model
             var stadium = new Stadium
             {
@@ -65,13 +67,17 @@ namespace StadiumReservationApi.Controllers
                 } : null
             };
 
+            stadium.StadiumFeatures = (dto.FeatureIds ?? new List<int>()).Distinct()
+                .Select(id => new StadiumFeature { FeatureId = id }).ToList();
             await _service.AddStadiumAsync(stadium);
-            return Ok(stadium);
+            return Ok(await _service.GetStadiumByIdAsync(stadium.Id));
         }
         // PUT: api/stadiums
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] StadiumDto dto)
         {
+            if (!await _service.FeaturesExistAsync(dto.FeatureIds))
+                return BadRequest("One or more selected features do not exist.");
             // تحويل البيانات من StadiumDto إلى Stadium Model مع تمرير الـ id
             var stadium = new Stadium
             {
@@ -91,7 +97,8 @@ namespace StadiumReservationApi.Controllers
                 } : null
             };
 
-            await _service.UpdateStadiumAsync(stadium);
+            if (await _service.GetStadiumByIdAsync(id) == null) return NotFound();
+            await _service.UpdateStadiumAsync(stadium, dto.FeatureIds);
             return Ok(stadium);
         }
         [HttpDelete("{id:int:min(1)}")]

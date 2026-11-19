@@ -11,6 +11,7 @@ namespace StadiumReservationApi.Models
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<StadiumFeature> StadiumFeatures { get; set; } = new List<StadiumFeature>();
     }
 }

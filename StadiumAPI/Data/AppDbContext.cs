@@ -36,6 +36,7 @@ namespace StadiumReservationApi.Data
                 .WithMany(f => f.StadiumFeatures)
                 .HasForeignKey(sf => sf.FeatureId);
 
+
             modelBuilder.Entity<Stadium>()
                 .HasOne(s => s.Category)
                 .WithMany(c => c.Stadiums)
